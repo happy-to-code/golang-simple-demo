@@ -1,0 +1,76 @@
+CREATE TABLE "public"."tx_history_2018" PARTITION OF public.tx_history FOR VALUES FROM (
+'2018-01-01 00:00:00'
+) TO (
+'2018-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2019" PARTITION OF public.tx_history FOR VALUES FROM (
+'2019-01-01 00:00:00'
+) TO (
+'2019-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2020" PARTITION OF public.tx_history FOR VALUES FROM (
+'2020-01-01 00:00:00'
+) TO (
+'2020-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2021" PARTITION OF public.tx_history FOR VALUES FROM (
+'2021-01-01 00:00:00'
+) TO (
+'2021-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2022" PARTITION OF public.tx_history FOR VALUES FROM (
+'2022-01-01 00:00:00'
+) TO (
+'2022-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2023" PARTITION OF public.tx_history FOR VALUES FROM (
+'2023-01-01 00:00:00'
+) TO (
+'2023-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2024" PARTITION OF public.tx_history FOR VALUES FROM (
+'2024-01-01 00:00:00'
+) TO (
+'2024-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2025" PARTITION OF public.tx_history FOR VALUES FROM (
+'2025-01-01 00:00:00'
+) TO (
+'2025-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2026" PARTITION OF public.tx_history FOR VALUES FROM (
+'2026-01-01 00:00:00'
+) TO (
+'2026-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2027" PARTITION OF public.tx_history FOR VALUES FROM (
+'2027-01-01 00:00:00'
+) TO (
+'2027-12-31 23:59:59'
+)
+;
+
+CREATE TABLE "public"."tx_history_2028" PARTITION OF public.tx_history FOR VALUES FROM (
+'2028-01-01 00:00:00'
+) TO (
+'2050-12-31 23:59:59'
+)
+;
