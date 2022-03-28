@@ -1,0 +1,16 @@
+ALTER TABLE IF EXISTS tx_history_2017 ADD CONSTRAINT tx_history_2017_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2018 ADD CONSTRAINT tx_history_2018_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2019 ADD CONSTRAINT tx_history_2019_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2020 ADD CONSTRAINT tx_history_2020_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2021 ADD CONSTRAINT tx_history_2021_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2022 ADD CONSTRAINT tx_history_2022_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2023 ADD CONSTRAINT tx_history_2023_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2024 ADD CONSTRAINT tx_history_2024_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2025 ADD CONSTRAINT tx_history_2025_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2026 ADD CONSTRAINT tx_history_2026_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2027 ADD CONSTRAINT tx_history_2027_unique_txhash UNIQUE (txhash);
+ALTER TABLE IF EXISTS tx_history_2028 ADD CONSTRAINT tx_history_2028_unique_txhash UNIQUE (txhash);
+
+
+
+ALTER TABLE IF EXISTS tx_history_2017 ADD CONSTRAINT tx_history_2017_unique_txhash UNIQUE (txhash);

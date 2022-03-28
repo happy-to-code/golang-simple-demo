@@ -1,0 +1,33 @@
+CREATE INDEX tx_history_2017_txhash_index ON tx_history_2017 USING hash (txhash);
+CREATE INDEX tx_history_2018_txhash_index ON tx_history_2018 USING hash (txhash);
+CREATE INDEX tx_history_2019_txhash_index ON tx_history_2019 USING hash (txhash);
+CREATE INDEX tx_history_2020_txhash_index ON tx_history_2020 USING hash (txhash);
+CREATE INDEX tx_history_2021_txhash_index ON tx_history_2021 USING hash (txhash);
+CREATE INDEX tx_history_2022_txhash_index ON tx_history_2022 USING hash (txhash);
+CREATE INDEX tx_history_2023_txhash_index ON tx_history_2023 USING hash (txhash);
+CREATE INDEX tx_history_2024_txhash_index ON tx_history_2024 USING hash (txhash);
+CREATE INDEX tx_history_2025_txhash_index ON tx_history_2025 USING hash (txhash);
+CREATE INDEX tx_history_2026_txhash_index ON tx_history_2026 USING hash (txhash);
+CREATE INDEX tx_history_2027_txhash_index ON tx_history_2027 USING hash (txhash);
+CREATE INDEX tx_history_2028_txhash_index ON tx_history_2028 USING hash (txhash);
+
+
+
+ALTER TABLE IF EXISTS tx_history_2017 ADD CONSTRAINT tx_history_2017_unique_txhash UNIQUE (txhash);
+
+
+DROP INDEX index;
+
+
+DROP INDEX  tx_history_2017_txhash_index;
+DROP INDEX  tx_history_2018_txhash_index;
+DROP INDEX  tx_history_2019_txhash_index;
+DROP INDEX  tx_history_2020_txhash_index;
+DROP INDEX  tx_history_2021_txhash_index;
+DROP INDEX  tx_history_2022_txhash_index;
+DROP INDEX  tx_history_2023_txhash_index;
+DROP INDEX  tx_history_2024_txhash_index;
+DROP INDEX  tx_history_2025_txhash_index;
+DROP INDEX  tx_history_2026_txhash_index;
+DROP INDEX  tx_history_2027_txhash_index;
+DROP INDEX  tx_history_2028_txhash_index;

@@ -1,0 +1,28 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE INDEX tx_history_2017_created_time_index ON tx_history_2017 (created_time);
+CREATE INDEX tx_history_2018_created_time_index ON tx_history_2018 (created_time);
+CREATE INDEX tx_history_2019_created_time_index ON tx_history_2019 (created_time);
+CREATE INDEX tx_history_2020_created_time_index ON tx_history_2020 (created_time);
+CREATE INDEX tx_history_2021_created_time_index ON tx_history_2021 (created_time);
+CREATE INDEX tx_history_2022_created_time_index ON tx_history_2022 (created_time);
+CREATE INDEX tx_history_2023_created_time_index ON tx_history_2023 (created_time);
+CREATE INDEX tx_history_2024_created_time_index ON tx_history_2024 (created_time);
+CREATE INDEX tx_history_2025_created_time_index ON tx_history_2025 (created_time);
+CREATE INDEX tx_history_2026_created_time_index ON tx_history_2026 (created_time);
+CREATE INDEX tx_history_2027_created_time_index ON tx_history_2027 (created_time);
+CREATE INDEX tx_history_2028_created_time_index ON tx_history_2028 (created_time);
