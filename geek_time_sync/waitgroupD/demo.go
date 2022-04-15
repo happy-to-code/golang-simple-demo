@@ -46,4 +46,5 @@ func main() {
 	wg.Wait()
 	// 输出当前计数器的值
 	fmt.Println(counter.Count())
+	fmt.Errorf("%s", "----")
 }
