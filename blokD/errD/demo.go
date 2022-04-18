@@ -13,6 +13,8 @@ type User struct {
 }
 
 func main() {
+	var b bool
+	fmt.Println(b)
 	var u User
 	u = User{
 		Name:   "XiaoMing",
