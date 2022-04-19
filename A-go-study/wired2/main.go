@@ -30,25 +30,24 @@ func NewEvent(g Greeter) Event {
 }
 func (e Event) Start() {
 	msg := e.Greeter.Greet()
-	fmt.Println(msg)
+	fmt.Println("---->", msg)
 }
 func (g Greeter) Greet() Message {
 	return g.Message
 }
 
 // 使用wire前
-func main() {
-	message := NewMessage("hello world")
-	greeter := NewGreeter(message)
-	event := NewEvent(greeter)
+// func main() {
+// 	message := NewMessage("hello world")
+// 	greeter := NewGreeter(message)
+// 	event := NewEvent(greeter)
+//
+// 	event.Start()
+// }
 
-	event.Start()
-}
-
-/*
 // 使用wire后
 func main() {
 	event := InitializeEvent("hello_world")
 
 	event.Start()
-}*/
+}
