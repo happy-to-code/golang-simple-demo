@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha256"
+	"encoding/binary"
+	"log"
 	"time"
 )
 
@@ -18,6 +21,12 @@ type Block struct {
 
 // Uint642Byte 将uint64 ==>[]byte
 func Uint642Byte(i uint64) (by []byte) {
+	var buffer bytes.Buffer
+	err := binary.Write(&buffer, binary.BigEndian, i)
+	if err != nil {
+		log.Panicln(err)
+	}
+	by = buffer.Bytes()
 	return
 }
 
@@ -37,14 +46,27 @@ func NewBlock(data string, preBlockHash []byte) *Block {
 	return &block
 }
 func (block *Block) SetHash() {
-	var blockInfo []byte
-	blockInfo = append(blockInfo, Uint642Byte(block.Version)...)
-	blockInfo = append(blockInfo, block.PrevHash...)
-	blockInfo = append(blockInfo, block.MerkelRoot...)
-	blockInfo = append(blockInfo, Uint642Byte(block.TimeStamp)...)
-	blockInfo = append(blockInfo, Uint642Byte(block.Difficulty)...)
-	blockInfo = append(blockInfo, Uint642Byte(block.Nonce)...)
-	blockInfo = append(blockInfo, block.Data...)
+	// 方法一拼装数据
+	// var blockInfo []byte
+	// blockInfo = append(blockInfo, Uint642Byte(block.Version)...)
+	// blockInfo = append(blockInfo, block.PrevHash...)
+	// blockInfo = append(blockInfo, block.MerkelRoot...)
+	// blockInfo = append(blockInfo, Uint642Byte(block.TimeStamp)...)
+	// blockInfo = append(blockInfo, Uint642Byte(block.Difficulty)...)
+	// blockInfo = append(blockInfo, Uint642Byte(block.Nonce)...)
+	// blockInfo = append(blockInfo, block.Data...)
+
+	// 方法二拼装数据
+	temp := [][]byte{
+		Uint642Byte(block.Version),
+		block.PrevHash,
+		block.MerkelRoot,
+		Uint642Byte(block.TimeStamp),
+		Uint642Byte(block.Difficulty),
+		Uint642Byte(block.Nonce),
+		block.Data,
+	}
+	blockInfo := bytes.Join(temp, []byte{})
 
 	hash := sha256.Sum256(blockInfo)
 	block.Hash = hash[:]
