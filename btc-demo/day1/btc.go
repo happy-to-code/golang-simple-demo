@@ -1,54 +1,8 @@
 package main
 
 import (
-	"crypto/sha256"
 	"fmt"
 )
-
-type Block struct {
-	PreHash []byte
-	Hash    []byte
-	Data    []byte
-}
-
-func NewBlock(data string, preBlockHash []byte) *Block {
-	block := Block{
-		PreHash: preBlockHash,
-		Hash:    []byte{},
-		Data:    []byte(data),
-	}
-	// 设置hash值
-	block.SetHash()
-	return &block
-}
-func (block *Block) SetHash() {
-	blockInfo := append(block.PreHash, block.Data...)
-	hash := sha256.Sum256(blockInfo)
-	block.Hash = hash[:]
-}
-
-type BlockChain struct {
-	blocks []*Block
-}
-
-func NewBlockChain() *BlockChain {
-	// 获取创世区块
-	genesisBlock := GenesisBlock()
-	return &BlockChain{
-		blocks: []*Block{genesisBlock},
-	}
-}
-func GenesisBlock() *Block {
-	return NewBlock("我是创世区块", []byte{})
-}
-
-func (bc *BlockChain) AddBlock(data string) {
-	lastBlock := bc.blocks[len(bc.blocks)-1]
-	preHash := lastBlock.Hash
-
-	block := NewBlock(data, preHash)
-	bc.blocks = append(bc.blocks, block)
-}
 
 func main() {
 	bc := NewBlockChain()
