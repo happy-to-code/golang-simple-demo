@@ -21,7 +21,7 @@ func NewBlockChain() *BlockChain {
 	var lastHash []byte
 	// 	1、打开数据库
 	db, err := bolt.Open("C:\\Users\\yida\\GolandProjects\\GoProjectDemo\\btc-demo\\"+blockChainDB, 0600, nil)
-	defer db.Close()
+	// defer db.Close()
 	if err != nil {
 		log.Panic("打开数据库失败")
 	}
@@ -51,9 +51,22 @@ func GenesisBlock() *Block {
 }
 
 func (bc *BlockChain) AddBlock(data string) {
-	// lastBlock := bc.blocks[len(bc.blocks)-1]
-	// preHash := lastBlock.Hash
-	//
-	// block := NewBlock(data, preHash)
-	// bc.blocks = append(bc.blocks, block)
+	db := bc.db
+	lastHash := bc.tail
+
+	db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(blockBucket))
+		if bucket == nil {
+			log.Panic("bucket不可以为空，请检查")
+		}
+
+		block := NewBlock(data, lastHash)
+		bucket.Put(block.Hash, block.Serialize())
+		bucket.Put([]byte(lastBlockHash), block.Hash)
+
+		// 更新内存中的区块链tail
+		bc.tail = block.Hash
+
+		return nil
+	})
 }
