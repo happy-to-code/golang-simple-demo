@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/azhengyongqin/golang-tree-menu v1.0.0
+	github.com/boltdb/bolt v1.3.1
 	github.com/chromedp/chromedp v0.8.0
 	github.com/facebookgo/inject v0.0.0-20180706035515-f23751cae28b
 	github.com/fsnotify/fsnotify v1.5.1
