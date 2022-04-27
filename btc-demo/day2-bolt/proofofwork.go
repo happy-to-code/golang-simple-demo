@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"fmt"
 	"log"
 	"math/big"
 )
@@ -30,6 +31,7 @@ func (pow *ProofOfWork) Run() ([]byte, uint64) {
 	block := pow.block
 	var nonce uint64
 	var hash [32]byte
+	fmt.Println("开始挖矿...")
 	for {
 		// 1、拼装数据   区块数据+变化的随机数
 		temp := [][]byte{

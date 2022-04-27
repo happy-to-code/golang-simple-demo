@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func main() {
+func main1() {
 	smap := make(map[string]string)
 
 	var s = "  tag, tag3,tag3，tag4"
