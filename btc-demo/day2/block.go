@@ -42,7 +42,14 @@ func NewBlock(data string, preBlockHash []byte) *Block {
 		Data:       []byte(data),
 	}
 	// 设置hash值
-	block.SetHash()
+	// block.SetHash()
+
+	// 创建pow对象
+	pow := NewProofOfWork(&block)
+	hash, nonce := pow.Run()
+	block.Hash = hash
+	block.Nonce = nonce
+
 	return &block
 }
 func (block *Block) SetHash() {
