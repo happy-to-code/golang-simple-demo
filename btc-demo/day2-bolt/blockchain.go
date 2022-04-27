@@ -34,7 +34,7 @@ func NewBlockChain() *BlockChain {
 		// 获取创世区块
 		genesisBlock := GenesisBlock()
 		// 写数据
-		bucket.Put(genesisBlock.Hash, genesisBlock.toByte())
+		bucket.Put(genesisBlock.Hash, genesisBlock.Serialize())
 		bucket.Put([]byte(lastBlockHash), genesisBlock.Hash)
 
 		lastHash = bucket.Get([]byte(lastBlockHash))

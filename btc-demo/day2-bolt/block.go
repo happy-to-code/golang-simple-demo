@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/gob"
 	"log"
 	"time"
 )
@@ -52,8 +53,22 @@ func NewBlock(data string, preBlockHash []byte) *Block {
 	return &block
 }
 
-func (block *Block) toByte() []byte {
+func (block *Block) Serialize() []byte {
+	var buffer bytes.Buffer
+	encoder := gob.NewEncoder(&buffer)
+	err := encoder.Encode(&block)
+	if err != nil {
+		log.Panicf("[%v]编码出错,err:%s\n", block, err.Error())
+	}
+	return buffer.Bytes()
+}
 
-	// todo
-	return []byte{}
+func Deserialize(data []byte) Block {
+	var block Block
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	err := decoder.Decode(&block)
+	if err != nil {
+		log.Printf("[%s]解码失败,err:%s", data, err.Error())
+	}
+	return block
 }
