@@ -79,3 +79,9 @@ func (bc *BlockChain) AddBlock(txs []*Transaction) {
 		return nil
 	})
 }
+
+func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
+	var utxo []TXOutput
+
+	return utxo
+}

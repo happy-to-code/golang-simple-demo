@@ -30,3 +30,12 @@ func (cli *CLI) AddBlock(data string) {
 	// cli.bc.AddBlock(data)
 	fmt.Println("添加区块成功")
 }
+
+func (cli *CLI) GetBalance(address string) {
+	utxos := cli.bc.FindUTXOs(address)
+	total := 0.0
+	for _, utxo := range utxos {
+		total += utxo.value
+	}
+	fmt.Printf("地址[%s]余额为：%f\n", address, total)
+}
