@@ -41,7 +41,7 @@ func (pow *ProofOfWork) Run() ([]byte, uint64) {
 			Uint642Byte(block.TimeStamp),
 			Uint642Byte(block.Difficulty),
 			Uint642Byte(nonce),
-			block.Data,
+			// block.Data,
 		}
 		blockInfo := bytes.Join(temp, []byte{})
 		// 2、做hash运算

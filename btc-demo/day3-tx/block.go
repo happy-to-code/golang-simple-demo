@@ -16,7 +16,8 @@ type Block struct {
 	Difficulty uint64
 	Nonce      uint64
 	Hash       []byte
-	Data       []byte
+	// Data       []byte
+	Transactions []*Transaction
 }
 
 // Uint642Byte 将uint64 ==>[]byte
@@ -30,17 +31,20 @@ func Uint642Byte(i uint64) (by []byte) {
 	return
 }
 
-func NewBlock(data string, preBlockHash []byte) *Block {
+func NewBlock(txs []*Transaction, preBlockHash []byte) *Block {
 	block := Block{
-		Version:    00,
-		PrevHash:   preBlockHash,
-		MerkelRoot: []byte{},
-		TimeStamp:  uint64(time.Now().Unix()),
-		Difficulty: 0,
-		Nonce:      0,
-		Hash:       []byte{},
-		Data:       []byte(data),
+		Version:      00,
+		PrevHash:     preBlockHash,
+		MerkelRoot:   []byte{},
+		TimeStamp:    uint64(time.Now().Unix()),
+		Difficulty:   0,
+		Nonce:        0,
+		Hash:         []byte{},
+		Transactions: txs,
 	}
+	// 设置梅克尔根
+	block.MerkelRoot = block.MakeMerkelRoot()
+
 	// 设置hash值
 	// block.SetHash()
 
@@ -71,4 +75,11 @@ func Deserialize(data []byte) Block {
 		log.Printf("[%s]解码失败,err:%s", data, err.Error())
 	}
 	return block
+}
+
+// MakeMerkelRoot 模拟梅克尔根
+func (block *Block) MakeMerkelRoot() []byte {
+
+	// todo
+	return []byte{}
 }

@@ -16,7 +16,7 @@ type BlockChain struct {
 	tail []byte // 最后一个块的hash值
 }
 
-func NewBlockChain() *BlockChain {
+func NewBlockChain(address string) *BlockChain {
 	var lastHash []byte
 	// 	1、打开数据库
 	db, err := bolt.Open(blockChainDB, 0600, nil)
@@ -35,7 +35,7 @@ func NewBlockChain() *BlockChain {
 			}
 
 			// 创建一个创世块，并作为第一个区块添加到区块链中
-			genesisBlock := GenesisBlock()
+			genesisBlock := GenesisBlock(address)
 
 			// 3. 写数据
 			// hash作为key， block的字节流作为value，尚未实现
@@ -54,11 +54,12 @@ func NewBlockChain() *BlockChain {
 		tail: lastHash,
 	}
 }
-func GenesisBlock() *Block {
-	return NewBlock("---我是创世区块---", []byte{})
+func GenesisBlock(address string) *Block {
+	coinbase := NewCoinbaseTx(address, "---我是创世区块---")
+	return NewBlock([]*Transaction{coinbase}, []byte{})
 }
 
-func (bc *BlockChain) AddBlock(data string) {
+func (bc *BlockChain) AddBlock(txs []*Transaction) {
 	db := bc.db
 	lastHash := bc.tail
 
@@ -68,7 +69,7 @@ func (bc *BlockChain) AddBlock(data string) {
 			log.Panic("bucket不可以为空，请检查")
 		}
 
-		block := NewBlock(data, lastHash)
+		block := NewBlock(txs, lastHash)
 		bucket.Put(block.Hash, block.Serialize())
 		bucket.Put([]byte(lastBlockHash), block.Hash)
 
