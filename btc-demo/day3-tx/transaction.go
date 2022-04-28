@@ -69,6 +69,53 @@ func NewCoinbaseTx(address string, data string) *Transaction {
 	return &tx
 }
 
+// NewTransaction
+// 创建普通转账交易
+func NewTransaction(from, to string, amount float64, bc *BlockChain) *Transaction {
+	// 1.找到合理的UTXO集合  map[string][]int64
+	utxos, resValue := bc.FindNeedUTXOs(from, amount)
+	if resValue < amount {
+		log.Panicf("【%f】【%f】余额不足，交易失败\n", resValue, amount)
+		return nil
+	}
+
+	var inputs []TXInput
+	var outputs []TXOutput
+	// 2.创建交易输入  将这些UTXO逐一转成inputs
+	for id, indexArray := range utxos {
+		for _, i := range indexArray {
+			inputs = append(inputs, TXInput{
+				TXid:  []byte(id),
+				Index: i,
+				Sig:   from,
+			})
+		}
+	}
+
+	// 3.创建交易输出  创建outputs
+	outputs = append(outputs, TXOutput{
+		Value:      amount,
+		PubKeyHash: to,
+	})
+
+	// 4.如果有找零  找零
+	if resValue > amount {
+		// 找零
+		outputs = append(outputs, TXOutput{
+			Value:      resValue - amount,
+			PubKeyHash: from,
+		})
+	}
+
+	tx := Transaction{
+		TXID:      []byte{},
+		TXInputs:  inputs,
+		TXOutputs: outputs,
+	}
+	tx.SetHash()
+	return &tx
+}
+
 // IsCoinbase 判断当前交易是否为挖矿交易
 func (tx *Transaction) IsCoinbase() bool {
 	// 交易的input只有1个  && 交易ID为空   && 交易的index为-1
