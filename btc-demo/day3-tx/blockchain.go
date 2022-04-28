@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/boltdb/bolt"
 	"log"
 )
@@ -82,6 +83,39 @@ func (bc *BlockChain) AddBlock(txs []*Transaction) {
 
 func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 	var utxo []TXOutput
+	// 定义一个map来保存消费过的output   key:output的交易ID   value:这个交易中索引的数组
+	spentOutPuts := make(map[string][]int64)
+
+	it := bc.NewIterator()
+	for {
+		// 1、遍历区块
+		block := it.Next()
+		// 2、遍历交易
+		for _, tx := range block.Transactions {
+			fmt.Printf("current txid :%x\n", tx.TXID)
+			// 3、遍历output，找到和自己相关的utxo（在添加output之前检查一下是否已经消耗过了）
+			for i, output := range tx.TXOutputs {
+				fmt.Printf("current index :%d\n", i)
+				if output.PubKeyHash == address {
+					utxo = append(utxo, output)
+				}
+			}
+
+			// 4、遍历input，找到自己花费过的utxo集合（把自己消耗过的标识出来）
+			for _, input := range tx.TXInputs {
+				if input.sig == address { // 说明是目标地址address消耗过的output
+					indexArray := spentOutPuts[string(input.TXid)]
+					indexArray = append(indexArray, input.Index)
+				}
+
+			}
+		}
+
+		if len(block.PrevHash) == 0 {
+			fmt.Println("区块遍历完成退出")
+			break
+		}
+	}
 
 	return utxo
 }
