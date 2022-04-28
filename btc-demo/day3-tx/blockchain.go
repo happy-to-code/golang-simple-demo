@@ -83,7 +83,7 @@ func (bc *BlockChain) AddBlock(txs []*Transaction) {
 
 func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 	var utxo []TXOutput
-	// 定义一个map来保存消费过的output   key:output的交易ID   value:这个交易中索引的数组
+	// 定义一个map来保存消费过的output   key:output的交易ID   Value:这个交易中索引的数组
 	spentOutPuts := make(map[string][]int64)
 
 	it := bc.NewIterator()
@@ -94,8 +94,20 @@ func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 		for _, tx := range block.Transactions {
 			fmt.Printf("current txid :%x\n", tx.TXID)
 			// 3、遍历output，找到和自己相关的utxo（在添加output之前检查一下是否已经消耗过了）
+		OUTPUT:
 			for i, output := range tx.TXOutputs {
 				fmt.Printf("current index :%d\n", i)
+
+				// 在这里做过滤，将所有消耗过的outputs和当前的 所即将添加的output对比，如果相同 则跳过  否则添加
+				int64s, ok := spentOutPuts[string(tx.TXID)]
+				if ok {
+					for _, j := range int64s {
+						if int64(i) == j { // 当前output硬消耗过了  不要再添加了
+							continue OUTPUT
+						}
+					}
+				}
+
 				if output.PubKeyHash == address {
 					utxo = append(utxo, output)
 				}
@@ -103,7 +115,7 @@ func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 
 			// 4、遍历input，找到自己花费过的utxo集合（把自己消耗过的标识出来）
 			for _, input := range tx.TXInputs {
-				if input.sig == address { // 说明是目标地址address消耗过的output
+				if input.Sig == address { // 说明是目标地址address消耗过的output
 					indexArray := spentOutPuts[string(input.TXid)]
 					indexArray = append(indexArray, input.Index)
 				}

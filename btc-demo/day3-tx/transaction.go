@@ -19,11 +19,11 @@ type Transaction struct {
 type TXInput struct {
 	TXid  []byte // 引用的交易ID
 	Index int64  // 引用的output索引值
-	sig   string // 解锁脚本
+	Sig   string // 解锁脚本
 }
 
 type TXOutput struct {
-	value      float64 // 转账金额
+	Value      float64 // 转账金额
 	PubKeyHash string  // 锁定脚本
 }
 
@@ -49,10 +49,10 @@ func NewCoinbaseTx(address string, data string) *Transaction {
 	input := TXInput{
 		TXid:  []byte{},
 		Index: -1,
-		sig:   data,
+		Sig:   data,
 	}
 	output := TXOutput{
-		value:      reward,
+		Value:      reward,
 		PubKeyHash: address,
 	}
 
