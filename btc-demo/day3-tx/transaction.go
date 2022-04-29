@@ -119,11 +119,8 @@ func NewTransaction(from, to string, amount float64, bc *BlockChain) *Transactio
 // IsCoinbase 判断当前交易是否为挖矿交易
 func (tx *Transaction) IsCoinbase() bool {
 	// 交易的input只有1个  && 交易ID为空   && 交易的index为-1
-	if len(tx.TXInputs) == 1 {
-		input := tx.TXInputs[0]
-		if bytes.Equal(input.TXid, []byte{}) && input.Index == -1 {
-			return true
-		}
+	if len(tx.TXInputs) == 1 && len(tx.TXInputs[0].TXid) == 0 && tx.TXInputs[0].Index == -1 {
+		return true
 	}
 	return false
 }
