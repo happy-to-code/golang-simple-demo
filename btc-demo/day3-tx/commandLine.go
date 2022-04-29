@@ -39,3 +39,6 @@ func (cli *CLI) GetBalance(address string) {
 	}
 	fmt.Printf("地址[%s]余额为：%f\n", address, total)
 }
+func (cli *CLI) Send(from, to string, amount float64, miner, data string) {
+	fmt.Printf("from:%s,to:%s,amount:%f,miner:%s,data:%s\n", from, to, amount, miner, data)
+}
