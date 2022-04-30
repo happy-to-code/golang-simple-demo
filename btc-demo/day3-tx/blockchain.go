@@ -92,11 +92,11 @@ func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 		block := it.Next()
 		// 2、遍历交易
 		for _, tx := range block.Transactions {
-			fmt.Printf("current txid :%x\n", tx.TXID)
+			// fmt.Printf("current txid :%x\n", tx.TXID)
 			// 3、遍历output，找到和自己相关的utxo（在添加output之前检查一下是否已经消耗过了）
 		OUTPUT:
 			for i, output := range tx.TXOutputs {
-				fmt.Printf("current index :%d\n", i)
+				// fmt.Printf("current index :%d\n", i)
 
 				// 在这里做过滤，将所有消耗过的outputs和当前的 所即将添加的output对比，如果相同 则跳过  否则添加
 				int64s, ok := spentOutPuts[string(tx.TXID)]
@@ -125,12 +125,12 @@ func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 					}
 				}
 			} else {
-				fmt.Println("coinbase交易，不做遍历")
+				// fmt.Println("coinbase交易，不做遍历")
 			}
 		}
 
 		if len(block.PrevHash) == 0 {
-			fmt.Println("区块遍历完成退出")
+			// fmt.Println("区块遍历完成退出")
 			break
 		}
 	}
@@ -195,6 +195,7 @@ func (bc *BlockChain) FindNeedUTXOs(from string, amount float64) (map[string][]i
 					if input.Sig == from { // 说明是目标地址address消耗过的output
 						indexArray := spentOutPuts[string(input.TXid)]
 						indexArray = append(indexArray, input.Index)
+						spentOutPuts[string(input.TXid)] = indexArray // 这边必须操作   不然可以用下面的语句   下面的语句==上面的3句
 					}
 
 				}
