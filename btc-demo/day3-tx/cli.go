@@ -13,7 +13,6 @@ type CLI struct {
 }
 
 const Usage = `
-	addBlock --data DATA	"add data to blockChain"
 	printChain				"print all blockChain data"
 	getBalance --address ADDRESS	"获取地址余额"
 	send FROM TO AMOUNT MINER DATA 	"由FROM转AMOUNT给TO，由MINER挖矿2，同时写入DATA"
@@ -31,15 +30,6 @@ func (cli *CLI) Run() {
 	// 	分析命令
 	cmd := args[1]
 	switch cmd {
-	case "addBlock":
-		fmt.Println("添加区块")
-		if len(args) == 4 && args[2] == "--data" {
-			data := args[3]
-			cli.AddBlock(data)
-		} else {
-			fmt.Println("添加区块使用参数不当，请检查")
-			fmt.Printf(Usage)
-		}
 	case "printChain":
 		fmt.Println("打印区块信息")
 		cli.PrintBlockChain()

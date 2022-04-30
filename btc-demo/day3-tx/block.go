@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/binary"
 	"encoding/gob"
 	"log"
@@ -79,7 +80,10 @@ func Deserialize(data []byte) Block {
 
 // MakeMerkelRoot 模拟梅克尔根
 func (block *Block) MakeMerkelRoot() []byte {
-
-	// todo
-	return []byte{}
+	var info []byte
+	for _, tx := range block.Transactions {
+		info = append(info, tx.TXID...)
+	}
+	hash := sha256.Sum256(info)
+	return hash[:]
 }
