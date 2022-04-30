@@ -16,6 +16,8 @@ const Usage = `
 	printChain				"print all blockChain data"
 	getBalance --address ADDRESS	"获取地址余额"
 	send FROM TO AMOUNT MINER DATA 	"由FROM转AMOUNT给TO，由MINER挖矿2，同时写入DATA"
+	newWallet		"创建一个新的钱包（公私钥对）"
+	listAddresses 	"列举所有的钱包地址"
 `
 
 func (cli *CLI) Run() {
@@ -33,7 +35,16 @@ func (cli *CLI) Run() {
 	case "printChain":
 		fmt.Println("打印区块信息")
 		cli.PrintBlockChain()
+	case "printchain":
+		fmt.Println("打印区块信息")
+		cli.PrintBlockChain()
 	case "getBalance":
+		fmt.Println("获取余额")
+		if len(args) == 4 && args[2] == "--address" {
+			address := args[3]
+			cli.GetBalance(address)
+		}
+	case "getbalance":
 		fmt.Println("获取余额")
 		if len(args) == 4 && args[2] == "--address" {
 			address := args[3]
@@ -54,7 +65,15 @@ func (cli *CLI) Run() {
 		data := args[6]
 		cli.Send(from, to, amount, miner, data)
 		fmt.Println("转账结束…………")
-
+	case "newWallet":
+		fmt.Println("创建钱包")
+		cli.NewWallet()
+	case "newwallet":
+		fmt.Println("创建钱包")
+		cli.NewWallet()
+	case "listAddresses":
+		fmt.Printf("列举所有地址...\n")
+		cli.ListAddresses()
 	default:
 		fmt.Println("无效的参数")
 		fmt.Printf(Usage)

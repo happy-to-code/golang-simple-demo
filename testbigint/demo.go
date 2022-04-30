@@ -18,4 +18,11 @@ func main() {
 	fmt.Println(setString)
 	fmt.Println(&setString)
 
+	fmt.Println("==============================")
+	s := "yida"
+	s1 := s[:len(s)/2]
+	s2 := s[len(s)/2:]
+	fmt.Println(s1)
+	fmt.Println(s2)
+
 }

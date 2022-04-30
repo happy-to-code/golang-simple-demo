@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/azhengyongqin/golang-tree-menu v1.0.0
 	github.com/boltdb/bolt v1.3.1
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/chromedp/chromedp v0.8.0
 	github.com/facebookgo/inject v0.0.0-20180706035515-f23751cae28b
 	github.com/fsnotify/fsnotify v1.5.1
@@ -17,6 +18,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.10.1
 	go.uber.org/zap v1.21.0
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.28.0
 	gorm.io/driver/mysql v1.3.3
@@ -74,7 +76,6 @@ require (
 	github.com/vcaesar/tt v0.20.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
 	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
