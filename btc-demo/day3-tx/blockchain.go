@@ -120,8 +120,9 @@ func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 					if input.Sig == address { // 说明是目标地址address消耗过的output
 						indexArray := spentOutPuts[string(input.TXid)]
 						indexArray = append(indexArray, input.Index)
+						spentOutPuts[string(input.TXid)] = indexArray // 这边必须操作   不然可以用下面的语句   下面的语句==上面的3句
+						// spentOutPuts[string(input.TXid)] = append(spentOutPuts[string(input.TXid)], input.Index)
 					}
-
 				}
 			} else {
 				fmt.Println("coinbase交易，不做遍历")

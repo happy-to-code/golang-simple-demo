@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
+	"fmt"
 	"log"
 )
 
@@ -78,6 +79,7 @@ func NewTransaction(from, to string, amount float64, bc *BlockChain) *Transactio
 		log.Panicf("【%f】【%f】余额不足，交易失败\n", resValue, amount)
 		return nil
 	}
+	fmt.Println("===========================>", utxos, "====\n", resValue)
 
 	var inputs []TXInput
 	var outputs []TXOutput
