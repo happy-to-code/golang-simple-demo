@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/boltdb/bolt"
 	"log"
 )
@@ -128,55 +129,87 @@ func (bc *BlockChain) FindNeedUTXOs(senderPubKeyHash []byte, amount float64) (ma
 }
 
 func (bc *BlockChain) FindUTXOTransactions(senderPubKeyHash []byte) []*Transaction {
-	var txs []*Transaction // 存储所有包含utxo交易的集合
-	// 定义一个map来保存消费过的output   key:output的交易ID   Value:这个交易中索引的数组
-	spentOutPuts := make(map[string][]int64)
+	var txs []*Transaction // 存储所有包含utxo交易集合
+	// 我们定义一个map来保存消费过的output，key是这个output的交易id，value是这个交易中索引的数组
+	// map[交易id][]int64
+	spentOutputs := make(map[string][]int64)
 
+	// 创建迭代器
 	it := bc.NewIterator()
-	for {
-		// 1、遍历区块
-		block := it.Next()
-		// 2、遍历交易
-		for _, tx := range block.Transactions {
-			// fmt.Printf("current txid :%x\n", tx.TXID)
-			// 3、遍历output，找到和自己相关的utxo（在添加output之前检查一下是否已经消耗过了）
-		OUTPUT:
-			for i, output := range tx.TXOutputs {
-				// fmt.Printf("current index :%d\n", i)
 
-				// 在这里做过滤，将所有消耗过的outputs和当前的 所即将添加的output对比，如果相同 则跳过  否则添加
-				int64s, ok := spentOutPuts[string(tx.TXID)]
-				if ok {
-					for _, j := range int64s {
-						if int64(i) == j { // 当前output硬消耗过了  不要再添加了
+	for {
+		// 1.遍历区块
+		block := it.Next()
+
+		// 2. 遍历交易
+		for _, tx := range block.Transactions {
+			// fmt.Printf("current txid : %x\n", tx.TXID)
+
+		OUTPUT:
+			// 3. 遍历output，找到和自己相关的utxo(在添加output之前检查一下是否已经消耗过)
+			//	i : 0, 1, 2, 3
+			for i, output := range tx.TXOutputs {
+				// fmt.Printf("current index : %d\n", i)
+				// 在这里做一个过滤，将所有消耗过的outputs和当前的所即将添加output对比一下
+				// 如果相同，则跳过，否则添加
+				// 如果当前的交易id存在于我们已经表示的map，那么说明这个交易里面有消耗过的output
+
+				// map[2222] = []int64{0}
+				// map[3333] = []int64{0, 1}
+				// 这个交易里面有我们消耗过得output，我们要定位它，然后过滤掉
+				if spentOutputs[string(tx.TXID)] != nil {
+					for _, j := range spentOutputs[string(tx.TXID)] {
+						// []int64{0, 1} , j : 0, 1
+						if int64(i) == j {
+							// fmt.Printf("111111")
+							// 当前准备添加output已经消耗过了，不要再加了
 							continue OUTPUT
 						}
 					}
 				}
 
+				// 这个output和我们目标的地址相同，满足条件，加到返回UTXO数组中
+				// if output.PubKeyHash == address {
 				if bytes.Equal(output.PubKeyHash, senderPubKeyHash) {
-					txs = append(txs, tx) // 返回所有和我相关的utxo交易集合
+					// fmt.Printf("222222")
+					// UTXO = append(UTXO, output)
+
+					// !!!!!重点
+					// 返回所有包含我的outx的交易的集合
+					txs = append(txs, tx)
+
+					// fmt.Printf("333333 : %f\n", UTXO[0].Value)
+				} else {
+					// fmt.Printf("333333")
 				}
 			}
-			// 如果当前交易为挖矿交易   则不做遍历  直接跳过
-			isCoinbase := tx.IsCoinbase()
-			if !isCoinbase {
-				// 4、遍历input，找到自己花费过的utxo集合（把自己消耗过的标识出来）
+
+			// 如果当前交易是挖矿交易的话，那么不做遍历，直接跳过
+
+			if !tx.IsCoinbase() {
+				// 4. 遍历input，找到自己花费过的utxo的集合(把自己消耗过的标示出来)
 				for _, input := range tx.TXInputs {
+					// 判断一下当前这个input和目标（李四）是否一致，如果相同，说明这个是李四消耗过的output,就加进来
+					// if input.Sig == address {
+					// if input.PubKey == senderPubKeyHash  //这是肯定不对的，要做哈希处理
 					pubKeyHash := HashPubKey(input.PubKey)
-					if bytes.Equal(pubKeyHash, senderPubKeyHash) { // 说明是目标地址address消耗过的output
-						indexArray := spentOutPuts[string(input.TXid)]
-						indexArray = append(indexArray, input.Index)
-						spentOutPuts[string(input.TXid)] = indexArray // 这边必须操作   不然可以用下面的语句   下面的语句==上面的3句
-						// spentOutPuts[string(input.TXid)] = append(spentOutPuts[string(input.TXid)], input.Index)
+					if bytes.Equal(pubKeyHash, senderPubKeyHash) {
+						// spentOutputs := make(map[string][]int64)
+						// indexArray := spentOutputs[string(input.TXid)]
+						// indexArray = append(indexArray, input.Index)
+						spentOutputs[string(input.TXid)] = append(spentOutputs[string(input.TXid)], input.Index)
+						// map[2222] = []int64{0}
+						// map[3333] = []int64{0, 1}
 					}
 				}
+			} else {
+				// fmt.Printf("这是coinbase，不做input遍历！")
 			}
 		}
 
 		if len(block.PrevHash) == 0 {
-			// fmt.Println("区块遍历完成退出")
 			break
+			fmt.Printf("区块遍历完成退出!")
 		}
 	}
 

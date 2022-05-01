@@ -2,50 +2,47 @@ package main
 
 import (
 	"bytes"
-	"fmt"
-
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"fmt"
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/ripemd160"
 	"log"
 )
 
-// 这里的钱包是一个结构   每个钱包保存了公钥 私钥对
+// 这里的钱包时一结构，每一个钱包保存了公钥,私钥对
 
 type Wallet struct {
+	// 私钥
 	Private *ecdsa.PrivateKey
-
-	// 	这里publickey不存原始的公钥  而是存储x y 拼接的字符串   在校验端重新拆分
-	PubKey []byte
+	// PubKey *ecdsa.PublicKey
+	// 约定，这里的PubKey不存储原始的公钥，而是存储X和Y拼接的字符串，在校验端重新拆分（参考r,s传递）
+	PubKey []byte //
 }
 
-// NewWallet 创建钱包
+// 创建钱包
 func NewWallet() *Wallet {
 	// 创建曲线
-	p256 := elliptic.P256()
+	curve := elliptic.P256()
 	// 生成私钥
-	privateKey, err := ecdsa.GenerateKey(p256, rand.Reader)
+	privateKey, err := ecdsa.GenerateKey(curve, rand.Reader)
 	if err != nil {
-		log.Panic("生成私钥出错,err", err.Error())
+		log.Panic()
 	}
 
 	// 生成公钥
-	publicKeyOrig := privateKey.PublicKey
+	pubKeyOrig := privateKey.PublicKey
 
-	// 拼接  X Y
-	pubKey := append(publicKeyOrig.X.Bytes(), publicKeyOrig.Y.Bytes()...)
+	// 拼接X, Y
+	pubKey := append(pubKeyOrig.X.Bytes(), pubKeyOrig.Y.Bytes()...)
 
-	return &Wallet{
-		Private: privateKey,
-		PubKey:  pubKey,
-	}
+	return &Wallet{Private: privateKey, PubKey: pubKey}
 }
 
-// NewAddress 生成地址
-func (w *Wallet) NewAddress() (addr string) {
+// 生成地址
+func (w *Wallet) NewAddress() string {
 	pubKey := w.PubKey
 
 	rip160HashValue := HashPubKey(pubKey)
@@ -59,11 +56,10 @@ func (w *Wallet) NewAddress() (addr string) {
 	// 25字节数据
 	payload = append(payload, checkCode...)
 
-	// 25字节数据
-	payload = append(payload, checkCode...)
+	// go语言有一个库，叫做btcd,这个是go语言实现的比特币全节点源码
+	address := base58.Encode(payload)
 
-	addr = base58.Encode(payload)
-	return
+	return address
 }
 
 func HashPubKey(data []byte) []byte {

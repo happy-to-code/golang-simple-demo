@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
-	// "github.com/btcsuite/btcutil/base58"
-	"GoProjectDemo/btc-demo/day4-v5/lib/base58"
+	"fmt"
 	"log"
 )
 
@@ -35,11 +34,11 @@ type TXOutput struct {
 func (output *TXOutput) Lock(address string) {
 	// 解码
 	// 	截取出公钥哈希：去除version（1字节），去除校验码（4字节）
-	addressByte := base58.Decode(address)
-	len := len(addressByte)
-	pubKeyHash := addressByte[1 : len-4]
+	// addressByte := base58.Decode(address)
+	// len := len(addressByte)
+	// pubKeyHash := addressByte[1 : len-4]
 
-	output.PubKeyHash = pubKeyHash
+	output.PubKeyHash = GetPubKeyFromAddress(address)
 }
 
 func NewTXOutput(value float64, address string) *TXOutput {
@@ -111,7 +110,7 @@ func NewTransaction(from, to string, amount float64, bc *BlockChain) *Transactio
 	// 1.找到合理的UTXO集合  map[string][]int64
 	utxos, resValue := bc.FindNeedUTXOs(pubKeyHash, amount)
 	if resValue < amount {
-		log.Panicf("【%f】【%f】余额不足，交易失败\n", resValue, amount)
+		fmt.Printf("【%f】【%f】余额不足，交易失败\n", resValue, amount)
 		return nil
 	}
 
@@ -132,7 +131,8 @@ func NewTransaction(from, to string, amount float64, bc *BlockChain) *Transactio
 	// 4.如果有找零  找零
 	if resValue > amount {
 		// 找零
-		outputs = append(outputs, *NewTXOutput(resValue-amount, from))
+		output = NewTXOutput(resValue-amount, from)
+		outputs = append(outputs, *output)
 	}
 
 	tx := Transaction{
