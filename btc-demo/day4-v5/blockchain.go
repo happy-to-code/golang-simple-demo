@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"github.com/boltdb/bolt"
 	"log"
 )
@@ -80,13 +81,13 @@ func (bc *BlockChain) AddBlock(txs []*Transaction) {
 	})
 }
 
-func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
+func (bc *BlockChain) FindUTXOs(pubKeyHash []byte) []TXOutput {
 	var utxo []TXOutput
 
-	txs := bc.FindUTXOTransactions(address)
+	txs := bc.FindUTXOTransactions(pubKeyHash)
 	for _, tx := range txs {
 		for _, output := range tx.TXOutputs {
-			if address == output.PubKeyHash {
+			if bytes.Equal(pubKeyHash, output.PubKeyHash) {
 				utxo = append(utxo, output)
 			}
 		}
@@ -94,31 +95,29 @@ func (bc *BlockChain) FindUTXOs(address string) []TXOutput {
 	return utxo
 }
 
-func (bc *BlockChain) FindNeedUTXOs(from string, amount float64) (map[string][]int64, float64) {
+func (bc *BlockChain) FindNeedUTXOs(senderPubKeyHash []byte, amount float64) (map[string][]int64, float64) {
 	utxos := make(map[string][]int64)
 	// 找到的utxo里面包含的钱总数
 	var calc float64
 
-	txs := bc.FindUTXOTransactions(from)
+	txs := bc.FindUTXOTransactions(senderPubKeyHash)
 	for _, tx := range txs {
 		for i, output := range tx.TXOutputs {
-			if from == output.PubKeyHash {
-				if output.PubKeyHash == from {
-					// utxo = append(utxo, output)
-					// 	找到自己最少的utxo
-					// 	3.比较一下是否满足转账需求
-					// 		a.满足  直接返回
-					// 		b.不满足  继续统计
-					if calc < amount {
-						// 	1.把utxo加进来
-						utxos[string(tx.TXID)] = append(utxos[string(tx.TXID)], int64(i))
-						// 	2.统计当前utxo总额
-						calc += output.Value
+			if bytes.Equal(senderPubKeyHash, output.PubKeyHash) {
+				// utxo = append(utxo, output)
+				// 	找到自己最少的utxo
+				// 	3.比较一下是否满足转账需求
+				// 		a.满足  直接返回
+				// 		b.不满足  继续统计
+				if calc < amount {
+					// 	1.把utxo加进来
+					utxos[string(tx.TXID)] = append(utxos[string(tx.TXID)], int64(i))
+					// 	2.统计当前utxo总额
+					calc += output.Value
 
-						// 	加完之后判断
-						if calc >= amount {
-							return utxos, calc
-						}
+					// 	加完之后判断
+					if calc >= amount {
+						return utxos, calc
 					}
 				}
 			}
@@ -128,7 +127,7 @@ func (bc *BlockChain) FindNeedUTXOs(from string, amount float64) (map[string][]i
 	return utxos, calc
 }
 
-func (bc *BlockChain) FindUTXOTransactions(address string) []*Transaction {
+func (bc *BlockChain) FindUTXOTransactions(senderPubKeyHash []byte) []*Transaction {
 	var txs []*Transaction // 存储所有包含utxo交易的集合
 	// 定义一个map来保存消费过的output   key:output的交易ID   Value:这个交易中索引的数组
 	spentOutPuts := make(map[string][]int64)
@@ -155,7 +154,7 @@ func (bc *BlockChain) FindUTXOTransactions(address string) []*Transaction {
 					}
 				}
 
-				if output.PubKeyHash == address {
+				if bytes.Equal(output.PubKeyHash, senderPubKeyHash) {
 					txs = append(txs, tx) // 返回所有和我相关的utxo交易集合
 				}
 			}
@@ -164,7 +163,8 @@ func (bc *BlockChain) FindUTXOTransactions(address string) []*Transaction {
 			if !isCoinbase {
 				// 4、遍历input，找到自己花费过的utxo集合（把自己消耗过的标识出来）
 				for _, input := range tx.TXInputs {
-					if input.Sig == address { // 说明是目标地址address消耗过的output
+					pubKeyHash := HashPubKey(input.PubKey)
+					if bytes.Equal(pubKeyHash, senderPubKeyHash) { // 说明是目标地址address消耗过的output
 						indexArray := spentOutPuts[string(input.TXid)]
 						indexArray = append(indexArray, input.Index)
 						spentOutPuts[string(input.TXid)] = indexArray // 这边必须操作   不然可以用下面的语句   下面的语句==上面的3句

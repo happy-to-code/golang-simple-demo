@@ -15,7 +15,7 @@ type CLI struct {
 const Usage = `
 	printChain				"print all blockChain data"
 	getBalance --address ADDRESS	"获取地址余额"
-	send FROM TO AMOUNT MINER DATA 	"由FROM转AMOUNT给TO，由MINER挖矿2，同时写入DATA"
+	send FROM TO AMOUNT MINER DATA 	"由FROM转AMOUNT给TO，由MINER挖矿，同时写入DATA"
 	newWallet		"创建一个新的钱包（公私钥对）"
 	listAddresses 	"列举所有的钱包地址"
 `
